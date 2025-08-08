@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyGarden - Plant List</title>
+</head>
+<body>
+    <h1>Plant List</h1>
+    <ul>
+        {% for plant in plants %}
+        <li>
+            <h2>{{ plant.name }}</h2>
+            <p><strong>Group:</strong> {{ plant.group.name }}</p>
+            {% if plant.image %}
+                <img src="{{ plant.image.url }}" alt="{{ plant.name }}" width="200">
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>
