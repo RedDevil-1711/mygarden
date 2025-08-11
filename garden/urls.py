@@ -4,13 +4,15 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-app_name = 'garden'  # Definindo app_name para usar namespace (opcional, mas recomendado)
+app_name = 'garden'  # Namespace para as urls do app
 
 urlpatterns = [
+    # Autenticação
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('signup/', views.signup, name='signup'),
 
+    # Views do app
     path('', views.plant_list, name='plant_list'),
     path('plant/<int:plant_id>/', views.plant_detail, name='plant_detail'),
     path('add_plant/', views.add_plant, name='add_plant'),

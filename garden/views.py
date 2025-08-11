@@ -1,7 +1,8 @@
+from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login, logout as auth_logout
+from django.contrib.auth import login, logout
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 
@@ -25,7 +26,6 @@ def plant_list(request):
 
     categories = Category.objects.all()
     groups = Group.objects.all()
-    all_plants = Plant.objects.all()
 
     contents = Content.objects.filter(plant__in=plants_qs).values('plant_id', 'category_id')
 
@@ -33,20 +33,21 @@ def plant_list(request):
     for c in contents:
         content_map.setdefault(c['plant_id'], set()).add(c['category_id'])
 
-    plants_data = []
+    # Agrupando plantas por grupo
+    plants_by_group = defaultdict(list)
+
     for plant in plants_qs:
         category_status = {}
         for category in categories:
             category_status[category.id] = category.id in content_map.get(plant.id, set())
-        plants_data.append({'plant': plant, 'category_status': category_status})
+        plants_by_group[plant.group_id].append({'plant': plant, 'category_status': category_status})
 
     context = {
-        'plants': plants_data,
         'categories': categories,
         'groups': groups,
+        'plants_by_group': dict(plants_by_group),
         'name_filter': name_filter,
         'group_filter': group_filter,
-        'all_plants': all_plants,
     }
     return render(request, 'garden/plant_list.html', context)
 
@@ -147,6 +148,6 @@ def signup(request):
 @require_POST
 @login_required
 def logout_view(request):
-    auth_logout(request)
+    logout(request)
     messages.info(request, "Você saiu da sua conta.")
     return redirect('garden:login')
