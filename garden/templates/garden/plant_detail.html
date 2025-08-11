@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ plant.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background: #fefefe;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .plant-image {
+            margin: 1rem 0;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .content-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+        .content-category {
+            color: #2980b9;
+            margin-bottom: 0.5rem;
+        }
+        .content-text {
+            margin-bottom: 1rem;
+        }
+        .content-image {
+            max-width: 200px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        a {
+            display: inline-block;
+            margin-top: 2rem;
+            text-decoration: none;
+            color: #3498db;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ plant.name }}</h1>
+    <p><strong>Grupo:</strong> {{ plant.group.name }}</p>
+
+    {% if plant.image %}
+        <img src="{{ plant.image.url }}" alt="{{ plant.name }}" class="plant-image" />
+    {% endif %}
+
+    <div class="content-section">
+        <h2>Conteúdos</h2>
+        {% for content in contents %}
+            <div class="content-item">
+                <h3 class="content-category">{{ content.category.name }}</h3>
+                {% if content.text %}
+                    <p class="content-text">{{ content.text }}</p>
+                {% endif %}
+                {% if content.image %}
+                    <img src="{{ content.image.url }}" alt="{{ content.category.name }}" class="content-image" />
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Sem conteúdos disponíveis.</p>
+        {% endfor %}
+    </div>
+
+    <p><a href="{% url 'garden:plant_list' %}">← Voltar para a lista</a></p>
+</body>
+</html>

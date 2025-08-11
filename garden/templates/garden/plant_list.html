@@ -1,24 +1,151 @@
+{% load dict_extras %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>MyGarden - Plant List</title>
+    <meta charset="UTF-8" />
+    <title>Lista de Plantas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        form.filter-form {
+            margin-bottom: 1.5rem;
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        label {
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            padding: 0.3rem 0.5rem;
+            margin-right: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .logout-button {
+            background-color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .logout-button:hover {
+            background-color: #c0392b;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        th {
+            background-color: #2980b9;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f0f8ff;
+        }
+        .status-yes {
+            color: green;
+            font-weight: bold;
+        }
+        .status-no {
+            color: red;
+            font-weight: bold;
+        }
+        a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Plant List</h1>
-    <ul>
-        {% for plant in plants %}
-        <li>
-            <h2>{{ plant.name }}</h2>
-            <p><strong>Group:</strong> {{ plant.group.name }}</p>
-            {% if plant.image %}
-                <img src="{{ plant.image.url }}" alt="{{ plant.name }}" width="200">
-            {% else %}
-                <p>No image available</p>
-            {% endif %}
-        </li>
-        <hr>
-        {% endfor %}
-    </ul>
+    <header>
+        <form method="post" action="{% url 'garden:logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </header>
+
+    <h1>Lista de Plantas</h1>
+
+    <form method="get" class="filter-form">
+        <label for="name">Nome:</label>
+        <input type="text" name="name" id="name" value="{{ name_filter }}" placeholder="Filtrar por nome" />
+
+        <label for="group">Grupo:</label>
+        <select name="group" id="group">
+            <option value="">Todos</option>
+            {% for group in groups %}
+                <option value="{{ group.id }}" {% if group_filter|stringformat:"s" == group.id|stringformat:"s" %}selected{% endif %}>{{ group.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Planta</th>
+                {% for category in categories %}
+                    <th>{{ category.name }}</th>
+                {% endfor %}
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in plants %}
+                <tr>
+                    <td><a href="{% url 'garden:plant_detail' item.plant.id %}">{{ item.plant.name }}</a></td>
+                    {% for category in categories %}
+                        <td>
+                            {% if item.category_status|get_item:category.id %}
+                                <span class="status-yes">✔</span>
+                            {% else %}
+                                <span class="status-no">—</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <!-- Botões de ação, se quiser -->
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="{{ categories|length|add:'2' }}">Nenhuma planta encontrada.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

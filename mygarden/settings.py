@@ -55,7 +55,7 @@ ROOT_URLCONF = 'mygarden.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,4 +125,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import os
 
 MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_ROOT=BASE_DIR / 'media'
+
+LOGIN_URL='garden:login'
+LOGIN_REDIRECT_URL='garden:plant_list'
+LOGOUT_REDIRECT_URL='garden:login'
+
