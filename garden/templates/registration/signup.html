@@ -66,12 +66,12 @@
 <body>
     <div class="signup-container">
         <h1>Criar Conta</h1>
-        <form method="post" action="{% url 'signup' %}">
+        <form method="post" action="{% url 'garden:signup' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Cadastrar</button>
         </form>
-        <p>Já tem conta? <a href="{% url 'plants:login' %}">Login here</a>.</p>
+        <p>Já tem conta? <a href="{% url 'garden:login' %}">Login here</a>.</p>
     </div>
 </body>
 </html>
